@@ -1,0 +1,21 @@
+{
+  "name": "bunyan-loggly",
+  "version": "0.0.1",
+  "description": "A bunyan stream to transport logs to loggly",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/smebberson/bunyan-loggly.git"
+  },
+  "keywords": [
+    "bunyan",
+    "log",
+    "loggly"
+  ],
+  "author": "Scott Mebberson",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/smebberson/bunyan-loggly/issues"
+  },
+  "homepage": "https://github.com/smebberson/bunyan-loggly"
+}

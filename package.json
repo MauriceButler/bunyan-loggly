@@ -17,5 +17,8 @@
   "bugs": {
     "url": "https://github.com/smebberson/bunyan-loggly/issues"
   },
-  "homepage": "https://github.com/smebberson/bunyan-loggly"
+  "homepage": "https://github.com/smebberson/bunyan-loggly",
+  "dependencies": {
+    "loggly": "~1.0.3"
+  }
 }

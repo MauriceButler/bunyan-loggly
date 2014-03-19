@@ -132,7 +132,7 @@ Most recent change, v0.0.4.
 
 - bunyan-loggly now requires to be setup as a [raw stream][rawstream]
 
-You can read about all changes here.
+[You can read about all changes.][bunyanlogglyhistory]
 
 [rawstream]: https://github.com/trentm/node-bunyan#stream-type-raw "Bunyan raw stream"
 [bunyanlogglyhistory]: https://github.com/smebberson/bunyan-loggly/blob/master/History.md "bunyan-loggly history"

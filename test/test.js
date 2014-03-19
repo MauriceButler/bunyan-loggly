@@ -14,6 +14,19 @@ describe('bunyan-loggly', function () {
 
 	});
 
+	it('should throw if not used as a raw stream', function () {
+
+		var logger = new Bunyan2Loggly({
+			token: config.token,
+			subdomain: config.subdomain
+		});
+
+		(function () {
+			logger.write(JSON.stringify({}))
+		}).should.throw();
+
+	});
+
 	describe('when using the buffer', function () {
 
 		var logger,

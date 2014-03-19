@@ -24,6 +24,10 @@ function Bunyan2Loggly (logglyConfig, buffer) {
 
 Bunyan2Loggly.prototype.write = function(rec) {
 
+	if (typeof rec !== 'object' && !Array.isArray(rec)) {
+		throw new Error('bunyan-loggly requires a raw stream. Please define the type as raw when setting up the bunyan stream.');
+	}
+
 	if (typeof rec === 'object') {
 
 		// loggly prefers timestamp over time

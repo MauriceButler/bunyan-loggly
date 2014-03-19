@@ -3,10 +3,7 @@ bunyan-loggly
 
 A bunyan stream to send logs through to loggly.
 
-bunyan-loggly is under early development. So far, it's simply but it works. I will be adding the following:
-
-- support for error reporting when node-loggly fails to transfer to loggly
-- basic buffering support
+## Configuration
 
 bunyan-loggly uses node-loggly under the hood. As such, when configuring bunyan-loggly as a stream for bunyan, you need to pass in the standard and required node-loggly configuration object.
 
@@ -22,6 +19,7 @@ For example:
 	}
 }
 ```
+> Please note: auth values are NOT required to simply send logs through to loggly.
 
 ## Usage
 
@@ -40,11 +38,7 @@ logger = bunyan.createLogger({
 			type: 'raw',
 			stream: new Bunyan2Loggly({
 				token: 'your-account-token',
-				subdomain: 'your-sub-domain',
-				auth: {
-					username: 'your-username',
-					password: 'your-password'
-				}
+				subdomain: 'your-sub-domain'
 			})
 		}
 	]
@@ -52,6 +46,10 @@ logger = bunyan.createLogger({
 
 logger.info({});
 ```
+
+> Please note: you MUST define `type: 'raw'` as bunyan-loggly expects to recieve objects so that certain values can be changed as required by loggly (i.e. time to timestamp).
+
+### Express logging
 
 This is an example of using bunyan-loggly to store express.js request logs.
 
@@ -71,11 +69,7 @@ request = bunyan.createLogger({
 			type: 'raw',
 			stream: new Bunyan2Loggly({
 				token: 'your-account-token',
-				subdomain: 'your-sub-domain',
-				auth: {
-					username: 'your-username',
-					password: 'your-password'
-				}
+				subdomain: 'your-sub-domain'
 			})
 		}
 	]
@@ -99,3 +93,46 @@ module.exports = function () {
 
 }
 ```
+
+## Buffering
+
+bunyan-loggly supports basic buffering and when setup, will only send your logs through to loggly on every x logs. To setup buffering, just pass an integer as the second parameter when creating a new instance of Bunyan2Loggly:
+
+```javascript
+var bunyan = require('bunyan'),
+	Bunyan2Loggly = require('bunyan-loggly').Bunyan2Loggly,
+	logger;
+
+// create the logger
+logger = bunyan.createLogger({
+	name: 'logglylog',
+	streams: [
+		{
+			type: 'raw',
+			stream: new Bunyan2Loggly({
+				token: 'your-account-token',
+				subdomain: 'your-sub-domain'
+			}, 5)
+		}
+	]
+});
+
+logger.info({});	// won't send to loggly
+logger.info({});	// won't send to loggly
+logger.info({});	// won't send to loggly
+logger.info({});	// won't send to loggly
+logger.info({});	// will send to loggly
+logger.info({});	// won't send to loggly
+```
+
+Changes
+-------
+
+Most recent change, v0.0.4.
+
+- bunyan-loggly now requires to be setup as a [raw stream][rawstream]
+
+You can read about all changes here.
+
+[rawstream]: https://github.com/trentm/node-bunyan#stream-type-raw "Bunyan raw stream"
+[bunyanlogglyhistory]: https://github.com/smebberson/bunyan-loggly/blob/master/History.md "bunyan-loggly history"

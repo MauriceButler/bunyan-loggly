@@ -3,6 +3,11 @@ bunyan-loggly changes
 
 Documentation of all changes to bunyan-loggly.
 
+v0.0.5
+------
+
+- added option to flush buffered logs after timeout
+
 v0.0.4
 ------
 

@@ -1,6 +1,6 @@
 
 var loggly = require('loggly'),
-	util = require('util');
+		util = require('util');
 
 function Bunyan2Loggly (logglyConfig, buffer, timeout) {
 
@@ -13,8 +13,8 @@ function Bunyan2Loggly (logglyConfig, buffer, timeout) {
 	this.buffer = buffer || 1;
 	this._buffer = [];
 
-  // define the buffer flush timeout
-  this.timeout = typeof timeout === 'number' && timeout > 0 ? timeout : 0;
+	// define the buffer flush timeout
+	this.timeout = typeof timeout === 'number' && timeout > 0 ? timeout : 0;
 
 	// add the https tag by default, just to make the loggly source setup work as expect
 	this.logglyConfig.tags = this.logglyConfig.tags || [];
@@ -50,13 +50,15 @@ Bunyan2Loggly.prototype.write = function(rec) {
 };
 
 Bunyan2Loggly.prototype.checkBuffer = function (force) {
-  if (!this._buffer.length) return;
-  this._timeout = clearTimeout(this._timeout);
+	if (!this._buffer.length) {
+		return;
+	}
+	this._timeout = clearTimeout(this._timeout);
 
 	if (this._buffer.length < this.buffer && !force) {
-    this._timeout = setTimeout(function(self) {
-      self.checkBuffer(true);    
-    }, this.timeout, this);
+		this._timeout = setTimeout(function(self) {
+			self.checkBuffer(true);
+		}, this.timeout, this);
 		return;
 	}
 

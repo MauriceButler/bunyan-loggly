@@ -57,7 +57,7 @@ Bunyan2Loggly.prototype.checkBuffer = function () {
 	this._buffer = [];
 
 	// log multiple (or single) requests with loggly
-	this.client.log(content);
+	this.client.log(content[0]);
 
 };
 

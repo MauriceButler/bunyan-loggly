@@ -3,6 +3,11 @@ bunyan-loggly changes
 
 Documentation of all changes to bunyan-loggly.
 
+v0.0.6
+------
+
+- fixed bug in v0.0.5 missing Loggly tags
+
 v0.0.4
 ------
 

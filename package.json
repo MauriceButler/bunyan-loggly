@@ -1,6 +1,6 @@
 {
   "name": "bunyan-loggly",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A bunyan stream to transport logs to loggly",
   "main": "index.js",
   "repository": {

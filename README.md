@@ -125,6 +125,32 @@ logger.info({});	// will send to loggly
 logger.info({});	// won't send to loggly
 ```
 
+### Flush timeout
+
+When buffering, a timeout can be provided to force flushing the buffer after a period of time. To setup a flush timeout, pass a timeout value (in ms) as the thrid parameter when creating a new instance of Bunyan2Loggly:
+
+```javascript
+var bunyan = require('bunyan'),
+	Bunyan2Loggly = require('bunyan-loggly').Bunyan2Loggly,
+	logger;
+
+// create the logger
+logger = bunyan.createLogger({
+	name: 'logglylog',
+	streams: [
+		{
+			type: 'raw',
+			stream: new Bunyan2Loggly({
+				token: 'your-account-token',
+				subdomain: 'your-sub-domain'
+			}, 5, 250)
+		}
+	]
+});
+
+logger.info({});	// will be sent to loggly in 250ms if buffer threshold is not reached
+```
+
 Changes
 -------
 

@@ -1,5 +1,4 @@
-bunyan-loggly
-=============
+# bunyan-loggly
 
 A bunyan stream to send logs through to loggly.
 
@@ -12,14 +11,9 @@ For example:
 ```javascript
 {
 	token: "your-really-long-input-token",
-	subdomain: "your-subdomain",
-	auth: {
-    	username: "your-username",
-    	password: "your-password"
-	}
+	subdomain: "your-subdomain"
 }
 ```
-> Please note: auth values are NOT required to simply send logs through to loggly.
 
 ## Usage
 
@@ -27,19 +21,20 @@ This is a basic usage example.
 
 ```javascript
 var bunyan = require('bunyan'),
-	Bunyan2Loggly = require('bunyan-loggly').Bunyan2Loggly,
-	logger;
+	Bunyan2Loggly = require('bunyan-loggly'),
+	logglyConfig = {
+		token: 'your-account-token',
+		subdomain: 'your-sub-domain'
+	},
+	logglyStream = new Bunyan2Loggly(logglyConfig);
 
 // create the logger
-logger = bunyan.createLogger({
+var logger = bunyan.createLogger({
 	name: 'logglylog',
 	streams: [
 		{
 			type: 'raw',
-			stream: new Bunyan2Loggly({
-				token: 'your-account-token',
-				subdomain: 'your-sub-domain'
-			})
+			stream: logglyStream
 		}
 	]
 });
@@ -47,52 +42,7 @@ logger = bunyan.createLogger({
 logger.info({});
 ```
 
-> Please note: you MUST define `type: 'raw'` as bunyan-loggly expects to recieve objects so that certain values can be changed as required by loggly (i.e. time to timestamp).
-
-### Express logging
-
-This is an example of using bunyan-loggly to store express.js request logs.
-
-```javascript
-var path = require('path'),
-	bunyan = require('bunyan'),
-	serializerRequest = require('../lib/serializer-request'),
-	Bunyan2Loggly = require('bunyan-loggly').Bunyan2Loggly,
-	request;
-
-// create the logger
-request = bunyan.createLogger({
-	name: 'request',
-	serializers: { req: bunyan.stdSerializers.req },
-	streams: [
-		{
-			type: 'raw',
-			stream: new Bunyan2Loggly({
-				token: 'your-account-token',
-				subdomain: 'your-sub-domain'
-			})
-		}
-	]
-});
-
-// export the middleware
-module.exports = function () {
-
-	return function (req, res, next) {
-
-		// move on straight away
-		next();
-
-		// log this request
-		request.info({
-			req : req,
-			production: process.env.NODE_ENV === 'production'
-		});
-
-	}
-
-}
-```
+> Please note: you MUST define `type: 'raw'` as bunyan-loggly expects to receive objects so that certain values can be changed as required by loggly (i.e. time to timestamp).
 
 ## Buffering
 
@@ -100,19 +50,21 @@ bunyan-loggly supports basic buffering and when setup, will only send your logs 
 
 ```javascript
 var bunyan = require('bunyan'),
-	Bunyan2Loggly = require('bunyan-loggly').Bunyan2Loggly,
-	logger;
+	Bunyan2Loggly = require('bunyan-loggly'),
+	logglyConfig = {
+		token: 'your-account-token',
+		subdomain: 'your-sub-domain'
+	},
+	bufferLength = 5,
+	logglyStream = new Bunyan2Loggly(logglyConfig, bufferLength);
 
 // create the logger
-logger = bunyan.createLogger({
+var logger = bunyan.createLogger({
 	name: 'logglylog',
 	streams: [
 		{
 			type: 'raw',
-			stream: new Bunyan2Loggly({
-				token: 'your-account-token',
-				subdomain: 'your-sub-domain'
-			}, 5)
+			stream: logglyStream
 		}
 	]
 });
@@ -125,40 +77,31 @@ logger.info({});	// will send to loggly
 logger.info({});	// won't send to loggly
 ```
 
-### Flush timeout
+### Buffer Timeout
 
-When buffering, a timeout can be provided to force flushing the buffer after a period of time. To setup a flush timeout, pass a timeout value (in ms) as the thrid parameter when creating a new instance of Bunyan2Loggly:
+When buffering, a timeout can be provided to force flushing the buffer after a period of time. To setup a flush timeout, pass a timeout value (in ms) as the third parameter when creating a new instance of Bunyan2Loggly:
 
 ```javascript
 var bunyan = require('bunyan'),
-	Bunyan2Loggly = require('bunyan-loggly').Bunyan2Loggly,
-	logger;
+	Bunyan2Loggly = require('bunyan-loggly'),
+	logglyConfig = {
+		token: 'your-account-token',
+		subdomain: 'your-sub-domain'
+	},
+	bufferLength = 5,
+	bufferTimeout = 500,
+	logglyStream = new Bunyan2Loggly(logglyConfig, bufferLength, bufferTimeout);
 
 // create the logger
-logger = bunyan.createLogger({
+var logger = bunyan.createLogger({
 	name: 'logglylog',
 	streams: [
 		{
 			type: 'raw',
-			stream: new Bunyan2Loggly({
-				token: 'your-account-token',
-				subdomain: 'your-sub-domain'
-			}, 5, 250)
+			stream: logglyStream
 		}
 	]
 });
 
-logger.info({});	// will be sent to loggly in 250ms if buffer threshold is not reached
+logger.info({});	// will be sent to loggly in 500ms if buffer threshold is not reached
 ```
-
-Changes
--------
-
-Most recent change, v0.0.4.
-
-- bunyan-loggly now requires to be setup as a [raw stream][rawstream]
-
-[You can read about all changes.][bunyanlogglyhistory]
-
-[rawstream]: https://github.com/trentm/node-bunyan#stream-type-raw "Bunyan raw stream"
-[bunyanlogglyhistory]: https://github.com/smebberson/bunyan-loggly/blob/master/History.md "bunyan-loggly history"

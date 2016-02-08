@@ -2,7 +2,8 @@ var should = require('should'),
 	bunyan = require('bunyan'),
 	Bunyan2Loggly = require('../').Bunyan2Loggly,
 	helpers = require('./helpers'),
-	config = helpers.loadConfig();
+	config = helpers.loadConfig(),
+	assert = require('assert');
 
 describe('bunyan-loggly', function () {
 
@@ -80,7 +81,70 @@ describe('bunyan-loggly', function () {
 			loggerBufferFive.write(log);
 			loggerBufferFive._buffer.should.have.lengthOf(0);
 
-		})
+		});
+
+		describe('when using the buffer flush timeout', function() {
+
+      var loggerBufferTimeout;
+
+  		before(function () {
+
+        loggerBufferTimeout = new Bunyan2Loggly({
+          name: 'bunyan-loggly',
+          token: config.token,
+          subdomain: config.subdomain
+        }, 5, 50);
+
+      });
+
+      it('should flush the buffer when the timeout is exceeded', function(done) {
+
+        loggerBufferTimeout._buffer.should.have.lengthOf(0);
+
+        loggerBufferTimeout.write(log);
+			  loggerBufferTimeout._buffer.should.have.lengthOf(1);
+
+        setTimeout(function() {
+          loggerBufferTimeout._buffer.should.have.lengthOf(0);
+          done();
+        }, 51);
+
+      });
+
+      it('should only set one active timeout', function(done) {
+        var timeout;
+
+        loggerBufferTimeout._buffer.should.have.lengthOf(0);
+
+        loggerBufferTimeout.write(log);
+        timeout = loggerBufferTimeout._timeout;
+			  loggerBufferTimeout._buffer.should.have.lengthOf(1);
+
+        loggerBufferTimeout.write(log);
+        loggerBufferTimeout._timeout.should.not.equal(timeout);
+			  loggerBufferTimeout._buffer.should.have.lengthOf(2);
+
+        timeout = setTimeout(function() {
+          loggerBufferTimeout._buffer.should.have.lengthOf(0);
+          done();
+        }, 51);
+
+      });
+
+      it('should clear the timeout if the buffer length is met', function() {
+
+        loggerBufferTimeout.write(log);
+			  loggerBufferTimeout._timeout.should.not.be.undefined;
+
+        loggerBufferTimeout.write(log);
+        loggerBufferTimeout.write(log);
+        loggerBufferTimeout.write(log);
+        loggerBufferTimeout.write(log);
+			  loggerBufferTimeout.should.have.property('_timeout').equal(undefined);
+
+      });
+
+    });
 
 	})
 

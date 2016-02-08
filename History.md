@@ -8,6 +8,11 @@ v0.0.6
 
 - fixed bug in v0.0.5 missing Loggly tags
 
+v0.0.5
+------
+
+- added option to flush buffered logs after timeout
+
 v0.0.4
 ------
 

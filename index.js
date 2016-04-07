@@ -1,6 +1,6 @@
 var loggly = require('loggly');
 
-function Bunyan2Loggly(logglyConfig, bufferLength, bufferTimeout){
+function Bunyan2Loggly(logglyConfig, bufferLength, bufferTimeout, callback){
     if(!logglyConfig || !logglyConfig.token || !logglyConfig.subdomain){
         throw new Error('bunyan-loggly requires a config object with token and subdomain');
     }
@@ -12,6 +12,7 @@ function Bunyan2Loggly(logglyConfig, bufferLength, bufferTimeout){
     this._buffer = [];
     this.bufferLength = bufferLength || 1;
     this.bufferTimeout = bufferTimeout;
+    this.callback = callback;
 }
 
 Bunyan2Loggly.prototype.write = function(data){
@@ -40,7 +41,11 @@ Bunyan2Loggly.prototype._processBuffer = function(){
     if (content.length == 1) {
         content = content[0];
     }
-    this.logglyClient.log(content);
+    this.logglyClient.log(content, function(err, result) {
+        if (this.callback) {
+            this.callback(err, result, content);
+        }
+    }.bind(this));
 };
 
 Bunyan2Loggly.prototype._checkBuffer = function(){

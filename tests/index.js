@@ -135,7 +135,7 @@ test('Bunyan2Loggly sends data to loggly', function (t) {
 });
 
 test('Bunyan2Loggly sends data to loggly once buffer limit is reached', function (t) {
-    t.plan(2);
+    t.plan(1);
     var mocks = getBaseMocks(),
         Bunyan2Loggly = proxyquire('../', mocks),
         testData = {foo: 'bar'},
@@ -147,7 +147,7 @@ test('Bunyan2Loggly sends data to loggly once buffer limit is reached', function
                 if(!sent){
                     t.fail('should not have sent until buffer limit reached');
                 }
-                t.deepEqual(data, testData, 'data sent to loggly');
+                t.deepEqual(data, [testData, testData], 'data sent to loggly');
             }
         };
     };

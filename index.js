@@ -37,9 +37,10 @@ Bunyan2Loggly.prototype._processBuffer = function(){
     var content = this._buffer.slice();
     this._buffer = [];
 
-    for (var i = 0; i < content.length; i++) {
-        this.logglyClient.log(content[i]);
+    if (content.length == 1) {
+        content = content[0];
     }
+    this.logglyClient.log(content);
 };
 
 Bunyan2Loggly.prototype._checkBuffer = function(){

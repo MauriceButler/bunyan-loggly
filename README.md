@@ -20,23 +20,24 @@ For example:
 This is a basic usage example.
 
 ```javascript
-var bunyan = require('bunyan'),
-	Bunyan2Loggly = require('bunyan-loggly'),
-	logglyConfig = {
-		token: 'your-account-token',
-		subdomain: 'your-sub-domain'
-	},
-	logglyStream = new Bunyan2Loggly(logglyConfig);
+var bunyan = require('bunyan');
+var Bunyan2Loggly = require('bunyan-loggly');
+var logglyConfig = {
+    token: 'your-account-token',
+    subdomain: 'your-sub-domain',
+};
+
+var logglyStream = new Bunyan2Loggly(logglyConfig);
 
 // create the logger
 var logger = bunyan.createLogger({
-	name: 'logglylog',
-	streams: [
-		{
-			type: 'raw',
-			stream: logglyStream
-		}
-	]
+    name: 'logglylog',
+    streams: [
+        {
+            type: 'raw',
+            stream: logglyStream,
+        },
+    ],
 });
 
 logger.info({});
@@ -49,32 +50,33 @@ logger.info({});
 bunyan-loggly supports basic buffering and when setup, will only send your logs through to loggly on every x logs. To setup buffering, just pass an integer as the second parameter when creating a new instance of Bunyan2Loggly:
 
 ```javascript
-var bunyan = require('bunyan'),
-	Bunyan2Loggly = require('bunyan-loggly'),
-	logglyConfig = {
-		token: 'your-account-token',
-		subdomain: 'your-sub-domain'
-	},
-	bufferLength = 5,
-	logglyStream = new Bunyan2Loggly(logglyConfig, bufferLength);
+var bunyan = require('bunyan');
+var Bunyan2Loggly = require('bunyan-loggly');
+var logglyConfig = {
+    token: 'your-account-token',
+    subdomain: 'your-sub-domain',
+};
+var bufferLength = 5;
+
+var logglyStream = new Bunyan2Loggly(logglyConfig, bufferLength);
 
 // create the logger
 var logger = bunyan.createLogger({
-	name: 'logglylog',
-	streams: [
-		{
-			type: 'raw',
-			stream: logglyStream
-		}
-	]
+    name: 'logglylog',
+    streams: [
+        {
+            type: 'raw',
+            stream: logglyStream,
+        },
+    ],
 });
 
-logger.info({});	// won't send to loggly
-logger.info({});	// won't send to loggly
-logger.info({});	// won't send to loggly
-logger.info({});	// won't send to loggly
-logger.info({});	// will send to loggly
-logger.info({});	// won't send to loggly
+logger.info({});    // won't send to loggly
+logger.info({});    // won't send to loggly
+logger.info({});    // won't send to loggly
+logger.info({});    // won't send to loggly
+logger.info({});    // will send to loggly
+logger.info({});    // won't send to loggly
 ```
 
 ### Buffer Timeout
@@ -82,28 +84,29 @@ logger.info({});	// won't send to loggly
 When buffering, a timeout can be provided to force flushing the buffer after a period of time. To setup a flush timeout, pass a timeout value (in ms) as the third parameter when creating a new instance of Bunyan2Loggly:
 
 ```javascript
-var bunyan = require('bunyan'),
-	Bunyan2Loggly = require('bunyan-loggly'),
-	logglyConfig = {
-		token: 'your-account-token',
-		subdomain: 'your-sub-domain'
-	},
-	bufferLength = 5,
-	bufferTimeout = 500,
-	logglyStream = new Bunyan2Loggly(logglyConfig, bufferLength, bufferTimeout);
+var bunyan = require('bunyan');
+var Bunyan2Loggly = require('bunyan-loggly');
+var logglyConfig = {
+    token: 'your-account-token',
+    subdomain: 'your-sub-domain',
+};
+var bufferLength = 5;
+var bufferTimeout = 500;
+
+var logglyStream = new Bunyan2Loggly(logglyConfig, bufferLength, bufferTimeout);
 
 // create the logger
 var logger = bunyan.createLogger({
-	name: 'logglylog',
-	streams: [
-		{
-			type: 'raw',
-			stream: logglyStream
-		}
-	]
+    name: 'logglylog',
+    streams: [
+        {
+            type: 'raw',
+            stream: logglyStream,
+        },
+    ],
 });
 
-logger.info({});	// will be sent to loggly in 500ms if buffer threshold is not reached
+logger.info({});    // will be sent to loggly in 500ms if buffer threshold is not reached
 ```
 
 ### Loggly request information
@@ -111,13 +114,16 @@ logger.info({});	// will be sent to loggly in 500ms if buffer threshold is not r
 Each time log content is sent to loggly, the result of this request will be passed to the optional callback paramer `logglyCallback`
 
 ```javascript
-var bunyan = require('bunyan'),
-	Bunyan2Loggly = require('bunyan-loggly'),
-	logglyConfig = {
-		token: 'your-account-token',
-		subdomain: 'your-sub-domain'
-	},
-	logglyStream = new Bunyan2Loggly(logglyConfig, null, null, function (error, result, content) {
-		// handle loggly callback
-	});
+var bunyan = require('bunyan');
+var Bunyan2Loggly = require('bunyan-loggly');
+var logglyConfig = {
+    token: 'your-account-token',
+    subdomain: 'your-sub-domain',
+};
+
+function logglyCallback(error, result, content) {
+    // handle loggly callback
+}
+
+var logglyStream = new Bunyan2Loggly(logglyConfig, null, null, logglyCallback);
 ```

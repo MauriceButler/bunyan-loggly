@@ -1,44 +1,48 @@
-var test = require('tape'),
-    proxyquire = require('proxyquire'),
-    testConfig = {
-        token: 'foo',
-        subdomain: 'bar'
-    };
+var test = require('tape');
+var proxyquire = require('proxyquire');
+var testConfig = {
+    token: 'foo',
+    subdomain: 'bar',
+};
 
-function getBaseMocks(){
+function getBaseMocks() {
     return {
         loggly: {
-            createClient: function(){
+            createClient: function () {
                 return {
-                    log: function(){}
+                    log: function () {},
                 };
-            }
-        }
+            },
+        },
     };
 }
 
 test('Bunyan2Loggly Exists', function (t) {
     t.plan(1);
+
     var Bunyan2Loggly = proxyquire('../', getBaseMocks());
-    t.equal(typeof Bunyan2Loggly, 'function',  'Bunyan2Loggly is a function');
+
+    t.equal(typeof Bunyan2Loggly, 'function', 'Bunyan2Loggly is a function');
 });
 
 test('Bunyan2Loggly throws on bad config', function (t) {
     t.plan(4);
-    var Bunyan2Loggly = proxyquire('../', getBaseMocks()),
-        exceptionMessage = /bunyan-loggly requires a config object with token and subdomain/;
 
-    t.throws(function(){new Bunyan2Loggly();}, exceptionMessage, 'throws on bad config');
-    t.throws(function(){new Bunyan2Loggly({});}, exceptionMessage, 'throws on bad config');
-    t.throws(function(){new Bunyan2Loggly({token: 'foo'});}, exceptionMessage, 'throws on bad config');
-    t.throws(function(){new Bunyan2Loggly({subdomain: 'foo'});}, exceptionMessage, 'throws on bad config');
+    var Bunyan2Loggly = proxyquire('../', getBaseMocks());
+    var exceptionMessage = /bunyan-loggly requires a config object with token and subdomain/;
+
+    t.throws(function () { new Bunyan2Loggly(); }, exceptionMessage, 'throws on bad config');
+    t.throws(function () { new Bunyan2Loggly({}); }, exceptionMessage, 'throws on bad config');
+    t.throws(function () { new Bunyan2Loggly({ token: 'foo' }); }, exceptionMessage, 'throws on bad config');
+    t.throws(function () { new Bunyan2Loggly({ subdomain: 'foo' }); }, exceptionMessage, 'throws on bad config');
 });
 
 test('Bunyan2Loggly creates loggly client', function (t) {
     t.plan(3);
+
     var mocks = getBaseMocks();
 
-    mocks.loggly.createClient = function(config){
+    mocks.loggly.createClient = function (config) {
         t.equal(config.token, testConfig.token, 'correct token');
         t.equal(config.subdomain, testConfig.subdomain, 'correct subdomain');
         t.equal(config.json, true, 'correct json');
@@ -51,45 +55,50 @@ test('Bunyan2Loggly creates loggly client', function (t) {
 
 test('Bunyan2Loggly sets default bufferLength', function (t) {
     t.plan(1);
-    var Bunyan2Loggly = proxyquire('../', getBaseMocks()),
-        bunyan2Loggly = new Bunyan2Loggly(testConfig);
+
+    var Bunyan2Loggly = proxyquire('../', getBaseMocks());
+    var bunyan2Loggly = new Bunyan2Loggly(testConfig);
 
     t.equal(bunyan2Loggly.bufferLength, 1, 'bufferLength defaulted correctly');
 });
 
 test('Bunyan2Loggly sets bufferLength if provided', function (t) {
     t.plan(1);
-    var Bunyan2Loggly = proxyquire('../', getBaseMocks()),
-        bunyan2Loggly = new Bunyan2Loggly(testConfig, 123);
+
+    var Bunyan2Loggly = proxyquire('../', getBaseMocks());
+    var bunyan2Loggly = new Bunyan2Loggly(testConfig, 123);
 
     t.equal(bunyan2Loggly.bufferLength, 123, 'bufferLength set correctly');
 });
 
 test('Bunyan2Loggly sets bufferTimeout if provided', function (t) {
     t.plan(1);
-    var Bunyan2Loggly = proxyquire('../', getBaseMocks()),
-        bunyan2Loggly = new Bunyan2Loggly(testConfig, null, 123);
+
+    var Bunyan2Loggly = proxyquire('../', getBaseMocks());
+    var bunyan2Loggly = new Bunyan2Loggly(testConfig, null, 123);
 
     t.equal(bunyan2Loggly.bufferTimeout, 123, 'bufferTimeout set correctly');
 });
 
 test('Bunyan2Loggly throws if write alled with non raw stream', function (t) {
     t.plan(2);
-    var Bunyan2Loggly = proxyquire('../', getBaseMocks()),
-        bunyan2Loggly = new Bunyan2Loggly(testConfig),
-        exceptionMessage = /bunyan-loggly requires a raw stream. Please define the type as raw when setting up the bunyan stream./;
 
-    t.throws(function(){bunyan2Loggly.write();}, exceptionMessage, 'throws on bad stream');
-    t.throws(function(){bunyan2Loggly.write('foo');}, exceptionMessage, 'throws on bad stream');
+    var Bunyan2Loggly = proxyquire('../', getBaseMocks());
+    var bunyan2Loggly = new Bunyan2Loggly(testConfig);
+    var exceptionMessage = /bunyan-loggly requires a raw stream. Please define the type as raw when setting up the bunyan stream./;
+
+    t.throws(function () { bunyan2Loggly.write(); }, exceptionMessage, 'throws on bad stream');
+    t.throws(function () { bunyan2Loggly.write('foo'); }, exceptionMessage, 'throws on bad stream');
 });
 
 test('Bunyan2Loggly adds data to buffer and calls check buffer', function (t) {
     t.plan(4);
-    var Bunyan2Loggly = proxyquire('../', getBaseMocks()),
-        bunyan2Loggly = new Bunyan2Loggly(testConfig),
-        testData = {foo: 'bar'};
 
-    bunyan2Loggly._checkBuffer = function(){
+    var Bunyan2Loggly = proxyquire('../', getBaseMocks());
+    var bunyan2Loggly = new Bunyan2Loggly(testConfig);
+    var testData = { foo: 'bar' };
+
+    bunyan2Loggly._checkBuffer = function () {
         t.pass('checkbuffer called');
     };
 
@@ -104,28 +113,30 @@ test('Bunyan2Loggly adds data to buffer and calls check buffer', function (t) {
 
 test('Bunyan2Loggly changes time to timestamp', function (t) {
     t.plan(1);
-    var Bunyan2Loggly = proxyquire('../', getBaseMocks()),
-        bunyan2Loggly = new Bunyan2Loggly(testConfig),
-        testData = {foo: 'bar', time: 'nao'};
 
-    bunyan2Loggly._checkBuffer = function(){};
+    var Bunyan2Loggly = proxyquire('../', getBaseMocks());
+    var bunyan2Loggly = new Bunyan2Loggly(testConfig);
+    var testData = { foo: 'bar', time: 'nao' };
+
+    bunyan2Loggly._checkBuffer = function () {};
 
     bunyan2Loggly.write(testData);
 
-    t.deepEqual(bunyan2Loggly._buffer[0], {foo: 'bar', timestamp: 'nao'}, 'time changed to timestamp');
+    t.deepEqual(bunyan2Loggly._buffer[0], { foo: 'bar', timestamp: 'nao' }, 'time changed to timestamp');
 });
 
 test('Bunyan2Loggly sends data to loggly', function (t) {
     t.plan(1);
-    var mocks = getBaseMocks(),
-        Bunyan2Loggly = proxyquire('../', mocks),
-        testData = {foo: 'bar'};
 
-    mocks.loggly.createClient = function(){
+    var mocks = getBaseMocks();
+    var Bunyan2Loggly = proxyquire('../', mocks);
+    var testData = { foo: 'bar' };
+
+    mocks.loggly.createClient = function () {
         return {
-            log: function(data){
+            log: function (data) {
                 t.deepEqual(data, testData, 'data sent to loggly');
-            }
+            },
         };
     };
 
@@ -136,23 +147,24 @@ test('Bunyan2Loggly sends data to loggly', function (t) {
 
 test('Bunyan2Loggly uses logglyCallback if provided', function (t) {
     t.plan(3);
-    var mocks = getBaseMocks(),
-        Bunyan2Loggly = proxyquire('../', mocks),
-        testData = {foo: 'bar'},
-        testError = 'testError',
-        testResult = 'testResult';
 
-    function logglyCallback(error, result, content){
+    var mocks = getBaseMocks();
+    var Bunyan2Loggly = proxyquire('../', mocks);
+    var testData = { foo: 'bar' };
+    var testError = 'testError';
+    var testResult = 'testResult';
+
+    function logglyCallback(error, result, content) {
         t.equal(error, testError, 'correct error');
         t.equal(result, testResult, 'correct result');
         t.deepEqual(content, testData, 'correct content');
     }
 
-    mocks.loggly.createClient = function(){
+    mocks.loggly.createClient = function () {
         return {
-            log: function(data, callback){
+            log: function (data, callback) {
                 callback(testError, testResult);
-            }
+            },
         };
     };
 
@@ -163,19 +175,20 @@ test('Bunyan2Loggly uses logglyCallback if provided', function (t) {
 
 test('Bunyan2Loggly sends data to loggly once buffer limit is reached', function (t) {
     t.plan(1);
-    var mocks = getBaseMocks(),
-        Bunyan2Loggly = proxyquire('../', mocks),
-        testData = {foo: 'bar'},
-        sent = 0;
 
-    mocks.loggly.createClient = function(){
+    var mocks = getBaseMocks();
+    var Bunyan2Loggly = proxyquire('../', mocks);
+    var testData = { foo: 'bar' };
+    var sent = 0;
+
+    mocks.loggly.createClient = function () {
         return {
-            log: function(data){
-                if(!sent){
+            log: function (data) {
+                if (!sent) {
                     t.fail('should not have sent until buffer limit reached');
                 }
                 t.deepEqual(data, [testData, testData], 'data sent to loggly');
-            }
+            },
         };
     };
 
@@ -188,19 +201,20 @@ test('Bunyan2Loggly sends data to loggly once buffer limit is reached', function
 
 test('Bunyan2Loggly sends data to loggly after bufferTimeout even if not reached bufferLimit', function (t) {
     t.plan(1);
-    var mocks = getBaseMocks(),
-        Bunyan2Loggly = proxyquire('../', mocks),
-        testData = {foo: 'bar'},
-        waitedABit = false;
 
-    mocks.loggly.createClient = function(){
+    var mocks = getBaseMocks();
+    var Bunyan2Loggly = proxyquire('../', mocks);
+    var testData = { foo: 'bar' };
+    var waitedABit = false;
+
+    mocks.loggly.createClient = function () {
         return {
-            log: function(data){
-                if(!waitedABit){
+            log: function (data) {
+                if (!waitedABit) {
                     t.fail('should not have sent until buffer limit reached');
                 }
                 t.deepEqual(data, testData, 'data sent to loggly');
-            }
+            },
         };
     };
 
@@ -208,7 +222,7 @@ test('Bunyan2Loggly sends data to loggly after bufferTimeout even if not reached
 
     bunyan2Loggly.write(testData);
 
-    setTimeout(function(){
+    setTimeout(function () {
         waitedABit = true;
     }, 200);
 });

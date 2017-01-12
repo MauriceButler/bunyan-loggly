@@ -11,7 +11,7 @@
   "author": "Maurice Butler <maurice.butler@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "clone": "^1.0.2",
+    "json-stringify-safe": "^5.0.1",
     "loggly": "^1.1.0"
   },
   "devDependencies": {

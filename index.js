@@ -1,4 +1,6 @@
 var loggly = require('loggly');
+var stringifySafe = require('json-stringify-safe');
+var noop = function () {};
 
 function Bunyan2Loggly(logglyConfig, bufferLength, bufferTimeout, callback) {
     if (!logglyConfig || !logglyConfig.token || !logglyConfig.subdomain) {
@@ -12,7 +14,7 @@ function Bunyan2Loggly(logglyConfig, bufferLength, bufferTimeout, callback) {
     this._buffer = [];
     this.bufferLength = bufferLength || 1;
     this.bufferTimeout = bufferTimeout;
-    this.callback = callback || function () {};
+    this.callback = callback || noop;
 }
 
 Bunyan2Loggly.prototype.write = function (data) {
@@ -22,7 +24,7 @@ Bunyan2Loggly.prototype.write = function (data) {
 
     // loggly prefers timestamp over time
     if (data.time) {
-        data = JSON.parse(JSON.stringify(data));
+        data = JSON.parse(stringifySafe(data, null, null, noop));
         data.timestamp = data.time;
         delete data.time;
     }

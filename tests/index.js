@@ -173,6 +173,29 @@ test('Bunyan2Loggly uses logglyCallback if provided', function (t) {
     bunyan2Loggly.write(testData);
 });
 
+test('Bunyan2Loggly handles circular references', function (t) {
+    t.plan(2);
+
+    var mocks = getBaseMocks();
+    var Bunyan2Loggly = proxyquire('../', mocks);
+    var testData = { time: 'nao' };
+
+    testData.x = testData;
+
+    mocks.loggly.createClient = function () {
+        return {
+            log: function (data) {
+                t.notEqual(data, testData, 'original data was not mutated');
+                t.deepEqual(data, { timestamp: 'nao' }, 'changed to timestamp');
+            },
+        };
+    };
+
+    var bunyan2Loggly = new Bunyan2Loggly(testConfig);
+
+    bunyan2Loggly.write(testData);
+});
+
 test('Bunyan2Loggly sends data to loggly once buffer limit is reached', function (t) {
     t.plan(1);
 

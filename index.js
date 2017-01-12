@@ -12,7 +12,7 @@ function Bunyan2Loggly(logglyConfig, bufferLength, bufferTimeout, callback){
     this._buffer = [];
     this.bufferLength = bufferLength || 1;
     this.bufferTimeout = bufferTimeout;
-    this.callback = callback;
+    this.callback = callback || function(){};
 }
 
 Bunyan2Loggly.prototype.write = function(data){
@@ -41,10 +41,8 @@ Bunyan2Loggly.prototype._processBuffer = function(){
     if (content.length == 1) {
         content = content[0];
     }
-    this.logglyClient.log(content, function(err, result) {
-        if (this.callback) {
-            this.callback(err, result, content);
-        }
+    this.logglyClient.log(content, function(error, result) {
+            this.callback(error, result, content);
     }.bind(this));
 };
 

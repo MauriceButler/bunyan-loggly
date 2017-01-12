@@ -134,6 +134,33 @@ test('Bunyan2Loggly sends data to loggly', function (t) {
     bunyan2Loggly.write(testData);
 });
 
+test('Bunyan2Loggly uses logglyCallback if provided', function (t) {
+    t.plan(3);
+    var mocks = getBaseMocks(),
+        Bunyan2Loggly = proxyquire('../', mocks),
+        testData = {foo: 'bar'},
+        testError = 'testError',
+        testResult = 'testResult';
+
+    function logglyCallback(error, result, content){
+        t.equal(error, testError, 'correct error');
+        t.equal(result, testResult, 'correct result');
+        t.deepEqual(content, testData, 'correct content');
+    }
+
+    mocks.loggly.createClient = function(){
+        return {
+            log: function(data, callback){
+                callback(testError, testResult);
+            }
+        };
+    };
+
+    var bunyan2Loggly = new Bunyan2Loggly(testConfig, null, null, logglyCallback);
+
+    bunyan2Loggly.write(testData);
+});
+
 test('Bunyan2Loggly sends data to loggly once buffer limit is reached', function (t) {
     t.plan(1);
     var mocks = getBaseMocks(),

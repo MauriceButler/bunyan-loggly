@@ -105,3 +105,19 @@ var logger = bunyan.createLogger({
 
 logger.info({});	// will be sent to loggly in 500ms if buffer threshold is not reached
 ```
+
+### Loggly request information
+
+Each time log content is sent to loggly, the result of this request will be passed to the optional callback paramer `logglyCallback`
+
+```javascript
+var bunyan = require('bunyan'),
+	Bunyan2Loggly = require('bunyan-loggly'),
+	logglyConfig = {
+		token: 'your-account-token',
+		subdomain: 'your-sub-domain'
+	},
+	logglyStream = new Bunyan2Loggly(logglyConfig, null, null, function (error, result, content) {
+		// handle loggly callback
+	});
+```

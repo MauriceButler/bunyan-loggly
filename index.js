@@ -2,6 +2,15 @@ var loggly = require('loggly');
 var stringifySafe = require('json-stringify-safe');
 var noop = function () {};
 
+var levels = {
+    10: 'TRACE',
+    20: 'DEBUG',
+    30: 'INFO',
+    40: 'WARN',
+    50: 'ERROR',
+    60: 'FATAL'
+}
+
 function Bunyan2Loggly(logglyConfig, bufferLength, bufferTimeout, callback) {
     if (!logglyConfig || !logglyConfig.token || !logglyConfig.subdomain) {
         throw new Error('bunyan-loggly requires a config object with token and subdomain');
@@ -27,6 +36,11 @@ Bunyan2Loggly.prototype.write = function (data) {
         data = JSON.parse(stringifySafe(data, null, null, noop));
         data.timestamp = data.time;
         delete data.time;
+    }
+
+    // replace level number with string
+    if (data.level && Number.isInteger(data.level) && levels[data.level]) {
+        data.level = levels[data.level]
     }
 
     this._buffer.push(data);

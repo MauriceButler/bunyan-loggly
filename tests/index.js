@@ -125,6 +125,44 @@ test('Bunyan2Loggly changes time to timestamp', function (t) {
     t.deepEqual(bunyan2Loggly._buffer[0], { foo: 'bar', timestamp: 'nao' }, 'time changed to timestamp');
 });
 
+test('Bunyan2Loggly changes level to string', function (t) {
+    var levels = {
+        10: 'TRACE',
+        20: 'DEBUG',
+        30: 'INFO',
+        40: 'WARN',
+        50: 'ERROR',
+        60: 'FATAL'
+    };
+
+    t.plan(Object.keys(levels).length);
+
+
+    var Bunyan2Loggly = proxyquire('../', getBaseMocks());
+    var bunyan2Loggly = new Bunyan2Loggly(testConfig);
+    Object.keys(levels).forEach(function(level) {
+        var testData = { foo: 'bar', level: parseInt(level) };
+
+        bunyan2Loggly._checkBuffer = function () {};
+
+        bunyan2Loggly.write(testData);
+        t.deepEqual(bunyan2Loggly._buffer[bunyan2Loggly._buffer.length - 1], { foo: 'bar', level: levels[level] }, 'level ' + level + ' to ' + levels[level]);
+    });
+});
+
+test('Bunyan2Loggly leaves level unchanged if no match', function (t) {
+    t.plan(1);
+
+    var Bunyan2Loggly = proxyquire('../', getBaseMocks());
+    var bunyan2Loggly = new Bunyan2Loggly(testConfig);
+    var testData = { foo: 'bar', level: 25 };
+
+    bunyan2Loggly._checkBuffer = function () {};
+
+    bunyan2Loggly.write(testData);
+    t.deepEqual(bunyan2Loggly._buffer[0], { foo: 'bar', level: 25 }, 'level 25 unchanged');
+});
+
 test('Bunyan2Loggly sends data to loggly', function (t) {
     t.plan(1);
 

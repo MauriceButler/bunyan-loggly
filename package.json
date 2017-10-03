@@ -12,7 +12,7 @@
   "license": "MIT",
   "dependencies": {
     "json-stringify-safe": "^5.0.1",
-    "loggly": "^1.1.0"
+    "node-loggly-bulk": "^2.0.0"
   },
   "devDependencies": {
     "proxyquire": "^1.7.4",

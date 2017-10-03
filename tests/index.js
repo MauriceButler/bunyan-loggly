@@ -7,7 +7,7 @@ var testConfig = {
 
 function getBaseMocks() {
     return {
-        loggly: {
+        'node-loggly-bulk': {
             createClient: function () {
                 return {
                     log: function () {},
@@ -42,7 +42,7 @@ test('Bunyan2Loggly creates loggly client', function (t) {
 
     var mocks = getBaseMocks();
 
-    mocks.loggly.createClient = function (config) {
+    mocks['node-loggly-bulk'].createClient = function (config) {
         t.equal(config.token, testConfig.token, 'correct token');
         t.equal(config.subdomain, testConfig.subdomain, 'correct subdomain');
         t.equal(config.json, true, 'correct json');
@@ -132,7 +132,7 @@ test('Bunyan2Loggly sends data to loggly', function (t) {
     var Bunyan2Loggly = proxyquire('../', mocks);
     var testData = { foo: 'bar' };
 
-    mocks.loggly.createClient = function () {
+    mocks['node-loggly-bulk'].createClient = function () {
         return {
             log: function (data) {
                 t.deepEqual(data, testData, 'data sent to loggly');
@@ -160,7 +160,7 @@ test('Bunyan2Loggly uses logglyCallback if provided', function (t) {
         t.deepEqual(content, testData, 'correct content');
     }
 
-    mocks.loggly.createClient = function () {
+    mocks['node-loggly-bulk'].createClient = function () {
         return {
             log: function (data, callback) {
                 callback(testError, testResult);
@@ -182,7 +182,7 @@ test('Bunyan2Loggly handles circular references', function (t) {
 
     testData.x = testData;
 
-    mocks.loggly.createClient = function () {
+    mocks['node-loggly-bulk'].createClient = function () {
         return {
             log: function (data) {
                 t.notEqual(data, testData, 'original data was not mutated');
@@ -204,7 +204,7 @@ test('Bunyan2Loggly sends data to loggly once buffer limit is reached', function
     var testData = { foo: 'bar' };
     var sent = 0;
 
-    mocks.loggly.createClient = function () {
+    mocks['node-loggly-bulk'].createClient = function () {
         return {
             log: function (data) {
                 if (!sent) {
@@ -230,7 +230,7 @@ test('Bunyan2Loggly sends data to loggly after bufferTimeout even if not reached
     var testData = { foo: 'bar' };
     var waitedABit = false;
 
-    mocks.loggly.createClient = function () {
+    mocks['node-loggly-bulk'].createClient = function () {
         return {
             log: function (data) {
                 if (!waitedABit) {

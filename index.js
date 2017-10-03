@@ -38,15 +38,18 @@ Bunyan2Loggly.prototype.write = function (originalData) {
 };
 
 Bunyan2Loggly.prototype._processBuffer = function () {
-    clearTimeout(this._timeoutId);
+    var bunyan2Loggly = this;
+    clearTimeout(bunyan2Loggly._timeoutId);
 
-    var content = this._buffer.slice();
+    var content = bunyan2Loggly._buffer.slice();
 
-    this._buffer = [];
+    bunyan2Loggly._buffer = [];
 
-    this.logglyClient.log(content, function (error, result) {
-        this.callback(error, result, content);
-    }.bind(this));
+    for (var i = 0; i < content.length; i++) {
+        bunyan2Loggly.logglyClient.log(content[i], function (error, result) {
+            bunyan2Loggly.callback(error, result, content);
+        });
+    }
 };
 
 Bunyan2Loggly.prototype._checkBuffer = function () {

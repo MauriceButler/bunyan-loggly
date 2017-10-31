@@ -135,7 +135,7 @@ test('Bunyan2Loggly sends data to loggly', function (t) {
     mocks['node-loggly-bulk'].createClient = function () {
         return {
             log: function (data) {
-                t.deepEqual(data, testData, 'data sent to loggly');
+                t.deepEqual(data, [testData], 'data sent to loggly');
             },
         };
     };
@@ -157,7 +157,7 @@ test('Bunyan2Loggly uses logglyCallback if provided', function (t) {
     function logglyCallback(error, result, content) {
         t.equal(error, testError, 'correct error');
         t.equal(result, testResult, 'correct result');
-        t.deepEqual(content, testData, 'correct content');
+        t.deepEqual(content, [testData], 'correct content');
     }
 
     mocks['node-loggly-bulk'].createClient = function () {
@@ -186,7 +186,7 @@ test('Bunyan2Loggly handles circular references', function (t) {
         return {
             log: function (data) {
                 t.notEqual(data, testData, 'original data was not mutated');
-                t.deepEqual(data, { timestamp: 'nao' }, 'changed to timestamp');
+                t.deepEqual(data, [{ timestamp: 'nao' }], 'changed to timestamp');
             },
         };
     };
@@ -236,7 +236,7 @@ test('Bunyan2Loggly sends data to loggly after bufferTimeout even if not reached
                 if (!waitedABit) {
                     t.fail('should not have sent until buffer limit reached');
                 }
-                t.deepEqual(data, testData, 'data sent to loggly');
+                t.deepEqual(data, [testData], 'data sent to loggly');
             },
         };
     };

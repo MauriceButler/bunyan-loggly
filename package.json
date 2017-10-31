@@ -13,7 +13,7 @@
   "license": "MIT",
   "dependencies": {
     "json-stringify-safe": "^5.0.1",
-    "node-loggly-bulk": "^2.0.0"
+    "node-loggly-bulk": "^2.0.3"
   },
   "devDependencies": {
     "@types/bunyan": "^1.8.3",

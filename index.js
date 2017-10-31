@@ -45,11 +45,9 @@ Bunyan2Loggly.prototype._processBuffer = function () {
 
     bunyan2Loggly._buffer = [];
 
-    for (var i = 0; i < content.length; i++) {
-        bunyan2Loggly.logglyClient.log(content[i], function (error, result) {
-            bunyan2Loggly.callback(error, result, content);
-        });
-    }
+    bunyan2Loggly.logglyClient.log(content, function (error, result) {
+        bunyan2Loggly.callback(error, result, content);
+    });
 };
 
 Bunyan2Loggly.prototype._checkBuffer = function () {

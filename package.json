@@ -13,12 +13,12 @@
   "license": "MIT",
   "dependencies": {
     "json-stringify-safe": "^5.0.1",
-    "node-loggly-bulk": "^2.2.1"
+    "node-loggly-bulk": "^2.2.2"
   },
   "devDependencies": {
-    "@types/bunyan": "^1.8.3",
-    "proxyquire": "^1.7.4",
-    "tape": "^4.4.0"
+    "@types/bunyan": "^1.8.4",
+    "proxyquire": "^2.0.1",
+    "tape": "^4.9.0"
   },
   "directories": {
     "test": "test"

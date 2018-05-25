@@ -7,15 +7,20 @@ function Bunyan2Loggly(logglyConfig, bufferLength, bufferTimeout, callback) {
         throw new Error('bunyan-loggly requires a config object with token and subdomain');
     }
 
+    this.callback = callback || noop;
+
+    this.bufferLength = bufferLength || 1;
+    this.bufferTimeout = bufferTimeout || 30 * 1000;
+
     logglyConfig.json = true;
     logglyConfig.isBulk = true;
 
-    this.logglyClient = loggly.createClient(logglyConfig);
+    logglyConfig.bufferOptions = {
+        size: this.bufferLength,
+        retriesInMilliSeconds: this.bufferTimeout,
+    };
 
-    this._buffer = [];
-    this.bufferLength = bufferLength || 1;
-    this.bufferTimeout = bufferTimeout;
-    this.callback = callback || noop;
+    this.logglyClient = loggly.createClient(logglyConfig);
 }
 
 Bunyan2Loggly.prototype.write = function (originalData) {
@@ -24,6 +29,7 @@ Bunyan2Loggly.prototype.write = function (originalData) {
     }
 
     var data = originalData;
+    var bunyan2Loggly = this;
 
     // loggly prefers timestamp over time
     if (data.time) {
@@ -32,45 +38,9 @@ Bunyan2Loggly.prototype.write = function (originalData) {
         delete data.time;
     }
 
-    this._buffer.push(data);
-
-    this._checkBuffer();
-};
-
-Bunyan2Loggly.prototype._processBuffer = function () {
-    var bunyan2Loggly = this;
-    clearTimeout(bunyan2Loggly._timeoutId);
-
-    var content = bunyan2Loggly._buffer.slice();
-
-    bunyan2Loggly._buffer = [];
-
-    bunyan2Loggly.logglyClient.log(content, function (error, result) {
-        bunyan2Loggly.callback(error, result, content);
+    bunyan2Loggly.logglyClient.log(data, function (error, result) {
+        bunyan2Loggly.callback(error, result, data);
     });
-};
-
-Bunyan2Loggly.prototype._checkBuffer = function () {
-    var bunyan2Loggly = this;
-
-    if (!this._buffer.length) {
-        return;
-    }
-
-    if (this._buffer.length >= this.bufferLength) {
-        return this._processBuffer();
-    }
-
-    if (this.bufferTimeout) {
-        clearTimeout(this._timeoutId);
-
-        this._timeoutId = setTimeout(
-            function () {
-                bunyan2Loggly._processBuffer();
-            },
-            this.bufferTimeout
-        );
-    }
 };
 
 module.exports = Bunyan2Loggly;

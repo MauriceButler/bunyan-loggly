@@ -10,8 +10,8 @@ For example:
 
 ```javascript
 {
-	token: "your-really-long-input-token",
-	subdomain: "your-subdomain"
+    token: "your-really-long-input-token",
+    subdomain: "your-subdomain"
 }
 ```
 
@@ -47,7 +47,7 @@ logger.info({});
 
 ## Buffering
 
-bunyan-loggly supports basic buffering and when setup, will only send your logs through to loggly on every x logs. To setup buffering, just pass an integer as the second parameter when creating a new instance of Bunyan2Loggly:
+bunyan-loggly supports basic buffering by default and when setup, will only send your logs through to loggly on every x logs. To setup buffering, just pass an integer as the second parameter when creating a new instance of Bunyan2Loggly:
 
 ```javascript
 var bunyan = require('bunyan');
@@ -107,6 +107,37 @@ var logger = bunyan.createLogger({
 });
 
 logger.info({});    // will be sent to loggly in 500ms if buffer threshold is not reached
+```
+
+### Turning off buffering
+
+You can turn off buffering by passing `isBulk: false` to the bunnyan2loggly config object.
+
+```javascript
+var bunyan = require('bunyan');
+var Bunyan2Loggly = require('bunyan-loggly');
+var logglyConfig = {
+    token: 'your-account-token',
+    subdomain: 'your-sub-domain',
+    isBulk: false
+};
+
+var logglyStream = new Bunyan2Loggly(logglyConfig);
+
+// create the logger
+var logger = bunyan.createLogger({
+    name: 'logglylog',
+    streams: [
+        {
+            type: 'raw',
+            stream: logglyStream,
+        },
+    ],
+});
+
+logger.info({}); // sent to loggly
+logger.info({}); // sent to loggly
+logger.info({}); // sent to loggly
 ```
 
 ### Loggly request information

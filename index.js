@@ -8,13 +8,11 @@ function Bunyan2Loggly(logglyConfig, bufferLength, bufferTimeout, callback) {
     }
 
     this.callback = callback || noop;
-
-    this.isBulk = logglyConfig.isBulk === false ? false : true;
     this.bufferLength = bufferLength || 1;
     this.bufferTimeout = bufferTimeout || 30 * 1000;
 
-    logglyConfig.json = true;
-    logglyConfig.isBulk = this.isBulk;
+    logglyConfig.json = logglyConfig.json !== false;
+    logglyConfig.isBulk = logglyConfig.isBulk !== false;
 
     if (logglyConfig.isBulk) {
         logglyConfig.bufferOptions = {

@@ -17,6 +17,7 @@ declare namespace BunyanLoggly {
         subdomain: string;
         tags?: string[];
         json?: boolean;
+        isBulk?: boolean;
         host?: string;
         auth?: {
             username: string;

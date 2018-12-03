@@ -116,19 +116,27 @@ test('Bunyan2Loggly sets bufferTimeout if provided', function(t) {
 test('Bunyan2Loggly sets isBulk if provided', function(t) {
     t.plan(1);
 
-    var Bunyan2Loggly = proxyquire('../', getBaseMocks());
-    var bunyan2Loggly = new Bunyan2Loggly({ token: testConfig.token, subdomain: testConfig.subdomain, isBulk: false });
+    var mocks = getBaseMocks();
 
-    t.equal(bunyan2Loggly.isBulk, false, 'isBulk set correctly');
+    mocks['node-loggly-bulk'].createClient = function(config) {
+        t.equal(config.isBulk, false, 'isBulk set correctly');
+    };
+
+    var Bunyan2Loggly = proxyquire('../', mocks);
+    new Bunyan2Loggly({ token: testConfig.token, subdomain: testConfig.subdomain, isBulk: false });
 });
 
 test('Bunyan2Logly defaults isBulk if not provided', function(t) {
     t.plan(1);
 
-    var Bunyan2Loggly = proxyquire('../', getBaseMocks());
-    var bunyan2Loggly = new Bunyan2Loggly(testConfig);
+    var mocks = getBaseMocks();
 
-    t.equal(bunyan2Loggly.isBulk, true, 'isBulk set correctly');
+    mocks['node-loggly-bulk'].createClient = function(config) {
+        t.equal(config.isBulk, true, 'isBulk defaults to true');
+    };
+
+    var Bunyan2Loggly = proxyquire('../', mocks);
+    new Bunyan2Loggly(testConfig);
 });
 
 test('Bunyan2Loggly throws if write called with non raw stream', function(t) {

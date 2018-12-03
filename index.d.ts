@@ -1,21 +1,26 @@
-import * as logger from "bunyan"
+import * as logger from 'bunyan';
 
-export = BunyanLoggly
+export = BunyanLoggly;
 
 declare class BunyanLoggly implements logger.Stream {
-  constructor(options: BunyanLoggly.IOptions, bufferLength?: number, bufferTimeout?: number, logglyCallback?: Function);
+    constructor(
+        options: BunyanLoggly.IOptions,
+        bufferLength?: number,
+        bufferTimeout?: number,
+        logglyCallback?: Function,
+    );
 }
 
 declare namespace BunyanLoggly {
-  interface IOptions {
-    token: string;
-    subdomain: string;
-    tags?: string[];
-    json?: boolean;
-    host?: string;
-    auth?: {
-        username: string;
-        password: string;
+    interface IOptions {
+        token: string;
+        subdomain: string;
+        tags?: string[];
+        json?: boolean;
+        host?: string;
+        auth?: {
+            username: string;
+            password: string;
+        };
     }
-  }
 }

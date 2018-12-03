@@ -71,12 +71,12 @@ var logger = bunyan.createLogger({
     ],
 });
 
-logger.info({});    // won't send to loggly
-logger.info({});    // won't send to loggly
-logger.info({});    // won't send to loggly
-logger.info({});    // won't send to loggly
-logger.info({});    // will send to loggly
-logger.info({});    // won't send to loggly
+logger.info({}); // won't send to loggly
+logger.info({}); // won't send to loggly
+logger.info({}); // won't send to loggly
+logger.info({}); // won't send to loggly
+logger.info({}); // will send to loggly
+logger.info({}); // won't send to loggly
 ```
 
 ### Buffer Timeout
@@ -106,7 +106,7 @@ var logger = bunyan.createLogger({
     ],
 });
 
-logger.info({});    // will be sent to loggly in 500ms if buffer threshold is not reached
+logger.info({}); // will be sent to loggly in 500ms if buffer threshold is not reached
 ```
 
 ### Turning off buffering
@@ -119,7 +119,7 @@ var Bunyan2Loggly = require('bunyan-loggly');
 var logglyConfig = {
     token: 'your-account-token',
     subdomain: 'your-sub-domain',
-    isBulk: false
+    isBulk: false,
 };
 
 var logglyStream = new Bunyan2Loggly(logglyConfig);

@@ -1,6 +1,6 @@
 var loggly = require('node-loggly-bulk');
 var stringifySafe = require('json-stringify-safe');
-var noop = function () {};
+var noop = function() {};
 
 function Bunyan2Loggly(logglyConfig, bufferLength, bufferTimeout, callback) {
     if (!logglyConfig || !logglyConfig.token || !logglyConfig.subdomain) {
@@ -8,27 +8,27 @@ function Bunyan2Loggly(logglyConfig, bufferLength, bufferTimeout, callback) {
     }
 
     this.callback = callback || noop;
-
-    this.isBulk = logglyConfig.isBulk === false ? false : true;
     this.bufferLength = bufferLength || 1;
     this.bufferTimeout = bufferTimeout || 30 * 1000;
 
-    logglyConfig.json = true;
-    logglyConfig.isBulk = this.isBulk;
+    logglyConfig.json = logglyConfig.json !== false;
+    logglyConfig.isBulk = logglyConfig.isBulk !== false;
 
     if (logglyConfig.isBulk) {
-      logglyConfig.bufferOptions = {
-        size: this.bufferLength,
-        retriesInMilliSeconds: this.bufferTimeout,
-      };
+        logglyConfig.bufferOptions = {
+            size: this.bufferLength,
+            retriesInMilliSeconds: this.bufferTimeout,
+        };
     }
 
     this.logglyClient = loggly.createClient(logglyConfig);
 }
 
-Bunyan2Loggly.prototype.write = function (originalData) {
+Bunyan2Loggly.prototype.write = function(originalData) {
     if (typeof originalData !== 'object') {
-        throw new Error('bunyan-loggly requires a raw stream. Please define the type as raw when setting up the bunyan stream.');
+        throw new Error(
+            'bunyan-loggly requires a raw stream. Please define the type as raw when setting up the bunyan stream.',
+        );
     }
 
     var data = originalData;
@@ -41,7 +41,7 @@ Bunyan2Loggly.prototype.write = function (originalData) {
         delete data.time;
     }
 
-    bunyan2Loggly.logglyClient.log(data, function (error, result) {
+    bunyan2Loggly.logglyClient.log(data, function(error, result) {
         bunyan2Loggly.callback(error, result, data);
     });
 };

@@ -8,7 +8,14 @@ declare class BunyanLoggly implements logger.Stream {
 
 declare namespace BunyanLoggly {
   interface IOptions {
-    token: string
-    subdomain: string
+    token: string;
+    subdomain: string;
+    tags?: string[];
+    json?: boolean;
+    host?: string;
+    auth?: {
+        username: string;
+        password: string;
+    }
   }
 }

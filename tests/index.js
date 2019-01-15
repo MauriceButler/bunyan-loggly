@@ -36,28 +36,28 @@ test('Bunyan2Loggly throws on bad config', function(t) {
             new Bunyan2Loggly();
         },
         exceptionMessage,
-        'throws on bad config',
+        'throws on bad config'
     );
     t.throws(
         function() {
             new Bunyan2Loggly({});
         },
         exceptionMessage,
-        'throws on bad config',
+        'throws on bad config'
     );
     t.throws(
         function() {
             new Bunyan2Loggly({ token: 'foo' });
         },
         exceptionMessage,
-        'throws on bad config',
+        'throws on bad config'
     );
     t.throws(
         function() {
             new Bunyan2Loggly({ subdomain: 'foo' });
         },
         exceptionMessage,
-        'throws on bad config',
+        'throws on bad config'
     );
 });
 
@@ -151,14 +151,14 @@ test('Bunyan2Loggly throws if write called with non raw stream', function(t) {
             bunyan2Loggly.write();
         },
         exceptionMessage,
-        'throws on bad stream',
+        'throws on bad stream'
     );
     t.throws(
         function() {
             bunyan2Loggly.write('foo');
         },
         exceptionMessage,
-        'throws on bad stream',
+        'throws on bad stream'
     );
 });
 

@@ -26,9 +26,7 @@ function Bunyan2Loggly(logglyConfig, bufferLength, bufferTimeout, callback) {
 
 Bunyan2Loggly.prototype.write = function(originalData) {
     if (typeof originalData !== 'object') {
-        throw new Error(
-            'bunyan-loggly requires a raw stream. Please define the type as raw when setting up the bunyan stream.',
-        );
+        throw new Error('bunyan-loggly requires a raw stream. Please define the type as raw when setting up the bunyan stream.');
     }
 
     var data = originalData;

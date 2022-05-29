@@ -28,3 +28,5 @@ node_modules
 
 # Development
 .vscode/launch.json
+
+.DS_Store

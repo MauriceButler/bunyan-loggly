@@ -2,7 +2,8 @@ import * as logger from 'bunyan';
 
 export = BunyanLoggly;
 
-declare class BunyanLoggly implements logger.Stream {
+interface BunyanLoggly extends logger.WriteFn {}
+declare class BunyanLoggly {
     constructor(
         options: BunyanLoggly.IOptions,
         bufferLength?: number,
